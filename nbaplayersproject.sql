@@ -2,6 +2,18 @@ select *
 from PortfolioProject..nbaplayers
 order by season;
 
+
+select top 10 country, count(*) as player_count, sum(total_career_games) as total_career_games
+from (
+select country, player_name, sum(gp) as total_career_games
+from PortfolioProject..nbaplayers
+where draft_number is not null and draft_year is not null
+group by player_name, country
+having sum(gp) > 164
+) as subquery
+group by country
+order by player_count desc;
+
 select *
 from PortfolioProject..nbaplayers
 where pts > 20 and ts_pct > 0.6 and usg_pct > 0.25
@@ -36,7 +48,7 @@ with PlayerRanked as (
     where country != 'USA' AND try_cast(substring(season, 1, 4) as int) < 2010
 )
 
-select player_name, team_abbreviation, age, college, country, draft_year, draft_round, draft_number, gp, pts, reb, ast, net_rating, usg_pct, ts_pct, ast_pct,season
+select top 10 player_name, team_abbreviation, age, college, country, draft_year, draft_round, draft_number, gp, pts, reb, ast, net_rating, usg_pct, ts_pct, ast_pct,season
 from PlayerRanked
 where SeasonRank = 1
 order by pts desc;
@@ -50,7 +62,7 @@ with PlayerRanked as (
     where country != 'USA' AND try_cast(substring(season, 1, 4) as int) > 2010
 )
 
-select player_name, team_abbreviation, age, college, country, draft_year, draft_round, draft_number, gp, pts, reb, ast, net_rating, usg_pct, ts_pct, ast_pct,season
+select top 10 player_name, team_abbreviation, age, college, country, draft_year, draft_round, draft_number, gp, pts, reb, ast, net_rating, usg_pct, ts_pct, ast_pct,season
 from PlayerRanked
 where SeasonRank = 1
 order by pts desc;
